@@ -1,6 +1,5 @@
 package de.imc.test.demo.dal.entities;
 
-import de.imc.test.demo.configuration.security.AppUserDetails;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +18,6 @@ public class UserEntity {
     private String password;
     private boolean isEnabled;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 }

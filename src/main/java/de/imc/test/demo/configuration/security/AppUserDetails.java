@@ -3,18 +3,26 @@ package de.imc.test.demo.configuration.security;
 import de.imc.test.demo.dal.entities.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 
 @RequiredArgsConstructor
 public class AppUserDetails implements UserDetails {
     private final UserEntity userEntity;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        final HashSet<GrantedAuthority> authorities = new HashSet<GrantedAuthority>(this.userEntity.getRoles().size());
+
+        for (String role : this.userEntity.getRoles())
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        return authorities;
     }
 
     @Override
